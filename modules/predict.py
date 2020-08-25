@@ -1,43 +1,44 @@
 import urllib2
-# If you are using Python 3+, import urllib instead of urllib2
-
 import json 
 
+API_KEY = 'OkBFV/GW3n/rfqOXChEb+/yp3oe/s7pPa0UzKm0tW6dJAau16MWuou28WKI+KSZxpUGfD6tgwHhxlWRl4WeCoA=='
+URL = 'https://ussouthcentral.services.azureml.net/workspaces/92518c6337964d95af1c417d83471dec/services/535fd871d310474ea32a096456a43822/execute?api-version=2.0&details=true'
 
-data =  {
+MAX_VALUE = 1000000000
 
+def predict_single(form_data):
+    app_category = form_data['app_category']
+    app_rating = form_data['app_rating'] or 0
+    app_ratings = form_data['app_ratings'] or 0
+    app_installs = form_data['app_installs'] or 0
+    app_price = form_data['app_price']
+    app_content_rating = form_data['app_content_rating']
+
+    data =  {
         "Inputs": {
-
-                "input1":
-                {
-                    "ColumnNames": ["App", "Category", "Rating", "Reviews", "Size", "Installs", "Type", "Price", "Content Rating", "Genres", "Last Updated", "Current Ver", "Android Ver"],
-                    "Values": [ [ "value", "ART_AND_DESIGN", "0", "0", "value", "0", "value", "0", "Adults only 18+", "value", "", "value", "value" ], [ "value", "ART_AND_DESIGN", "0", "0", "value", "0", "value", "0", "Adults only 18+", "value", "", "value", "value" ], ]
-                },        },
-            "GlobalParameters": {
-}
+            "input1":
+            {
+                "ColumnNames": ["Category", "Rating", "Reviews", "Installs", "Price", "Content Rating"],
+                "Values": [[app_category, app_rating, app_ratings, app_installs, app_price, app_content_rating]]
+            },        
+        },
+        "GlobalParameters": {}
     }
 
-body = str.encode(json.dumps(data))
+    body = str.encode(json.dumps(data))
+    headers = {'Content-Type':'application/json', 'Authorization':('Bearer '+ API_KEY)}
 
-url = 'https://ussouthcentral.services.azureml.net/workspaces/92518c6337964d95af1c417d83471dec/services/535fd871d310474ea32a096456a43822/execute?api-version=2.0&details=true'
-api_key = 'OkBFV/GW3n/rfqOXChEb+/yp3oe/s7pPa0UzKm0tW6dJAau16MWuou28WKI+KSZxpUGfD6tgwHhxlWRl4WeCoA==' # Replace this with the API key for the web service
-headers = {'Content-Type':'application/json', 'Authorization':('Bearer '+ api_key)}
+    req = urllib2.Request(URL, body, headers) 
 
-req = urllib2.Request(url, body, headers) 
+    try:
+        response = urllib2.urlopen(req)
+        result = response.read()
 
-try:
-    response = urllib2.urlopen(req)
+        raw_value = float(json.loads(result)['Results']['output1']['value']['Values'][0][0])
 
-    # If you are using Python 3+, replace urllib2 with urllib.request in the above code:
-    # req = urllib.request.Request(url, body, headers) 
-    # response = urllib.request.urlopen(req)
+        result_value = max(0, int(raw_value * MAX_VALUE))
 
-    result = response.read()
-    print(result) 
-except urllib2.HTTPError, error:
-    print("The request failed with status code: " + str(error.code))
+        return str(result_value)
 
-    # Print the headers - they include the requert ID and the timestamp, which are useful for debugging the failure
-    print(error.info())
-
-    print(json.loads(error.read()))    
+    except urllib2.HTTPError, error:
+        return str(error.code) + str(error.info()) + str(json.loads(error.read()))

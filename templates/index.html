@@ -9,15 +9,53 @@
     </head>
 
     <body>
-        <form method="POST">
-            <p><label for="app_anme">App name: </label><input type="text" name="app_name"></p>
-            <p><label for="app_category">Category: </label><select name="app_category"></select></p>
-            <p><label for="app_rating">Current average rating: </label><input type="number" name="app_rating"></p>
-            <p><label for="app_ratings">Number of ratings: </label><input type="number" name="app_ratings"></p>
-            <p><label for="app_installs">Number of current installs: </label><input type="number" name="app_installs"></p>
-            <p><label for="app_price">Price: </label>$<input type="number" name="app_price"></p>
-            <p><label for="app_content_rating">Content rating: </label><select name="app_content_rating"></select></p>
-        </form>
+        <header>
+            <h1>App Install Predictor</h1>
+        </header>
+
+        <main>
+            <section>
+                <article>
+                    <h2>Brief description</h2>
+                    <p>This web-site is created as a student project for a college course.</p>
+                    <p>It has been created with Python/Flask and jQuery. Purpose of this web-site is for an app developer to be
+                        able to predict their app's lifetime sales - whether the app is already on the store or not.
+                    </p>
+                    <p>It uses Microsoft Azure Classic's Machine Learning and their own deployed web service.</p>
+                    <p>This web-site takes necessary inputs and sends a RESTful API request towards Azure's web service.
+                        It also provides API on its own which sends necessary data to estimate the number of installs - without needing
+                        to know Azure's API key.
+                    </p>
+                </article>
+
+                <article>
+                    <div class="form">
+                        <button id="switch_form">New application</button>
+
+                        <form method="POST" action="/predict/">
+                            <p><label for="app_name">App name: </label><input type="text" name="app_name"></p>
+                            <p><label for="app_category">Category: </label><select name="app_category"></select></p>
+                            <p class="toggleable"><label for="app_rating">Current average rating: </label><input type="number" name="app_rating"></p>
+                            <p class="toggleable"><label for="app_ratings">Number of ratings: </label><input type="number" name="app_ratings"></p>
+                            <p class="toggleable"><label for="app_installs">Number of current installs: </label><input type="number" name="app_installs"></p>
+                            <p><label for="app_price">Price: </label>$<input type="number" name="app_price" required></p>
+                            <p><label for="app_content_rating">Content rating: </label><select name="app_content_rating"></select></p>
+
+                            <p><input type="submit"></p>
+                        </form>
+                    </div>
+
+                    <div class="result">
+                        <p class="result"></p>
+                    </div>
+                </article>
+            </section>
+        </main>
+
+        <footer>
+            <p><em>Author: </em>Matej Dmitrović</p>
+            <p><em>e-Mail: </em>mdmitrovic@etfos.hr</p>
+        </footer>
     </body>
 
     <script>
@@ -57,7 +95,7 @@
             'WEATHER'
         ];
 
-        var content_ratings = [
+        var contentRatings = [
             'Unrated',
             'Everyone', 
             'Everyone 10+', 
@@ -66,25 +104,53 @@
             'Adults only 18+', 
         ];
 
+        var btnFullForm = 'Switch to completely new app';
+        var btnRunningForm = 'Switch to an already made app';
+
         $(document).ready(function() {
-            let category_select = $('select[name=app_category]');
-            let content_ratings_select = $('select[name=app_content_rating]');
+            let categorySelect = $('select[name=app_category]');
+            let contentRatingsSelect = $('select[name=app_content_rating]');
+
+            let SWITCHED = false;
 
             for (let category of categories) {
                 let option = document.createElement('option');
                 option.value = category;
                 option.innerHTML = category.charAt(0).toUpperCase() + category.toLowerCase().slice(1).replace(/_/g, ' ');
 
-                category_select.append(option);
+                categorySelect.append(option);
             }
 
-            for (let content_rating of content_ratings) {
+            for (let contentRating of contentRatings) {
                 let option = document.createElement('option');
-                option.value = content_rating;
-                option.innerHTML = content_rating;
+                option.value = contentRating;
+                option.innerHTML = contentRating;
 
-                content_ratings_select.append(option);
+                contentRatingsSelect.append(option);
             }
+
+            $('button#switch_form').click(function() {
+                SWITCHED = !SWITCHED;
+
+                if (SWITCHED) {
+                    $('button#switch_form').html(btnRunningForm);
+                } else {
+                    $('button#switch_form').html(btnFullForm);
+                }
+
+                $('.toggleable').toggle();
+            });
+
+            $('form').submit(function() {
+                $('p.result').html('Evaluating...');
+                $.post($(this).attr('action'), $(this).serialize(), function (data) {
+                    console.log('Recieved data: ' + data);
+
+                    $('p.result').html(data);
+                });
+
+                return false;
+            });
         });
     </script>
 </html>
