@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>App Install Predictor</title>
+
+        <meta charset="UTF-8">
+
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    </head>
+
+    <body>
+        <form method="POST">
+            <p><label for="app_anme">App name: </label><input type="text" name="app_name"></p>
+            <p><label for="app_category">Category: </label><select name="app_category"></select></p>
+            <p><label for="app_rating">Current average rating: </label><input type="number" name="app_rating"></p>
+            <p><label for="app_ratings">Number of ratings: </label><input type="number" name="app_ratings"></p>
+            <p><label for="app_installs">Number of current installs: </label><input type="number" name="app_installs"></p>
+            <p><label for="app_price">Price: </label>$<input type="number" name="app_price"></p>
+            <p><label for="app_content_rating">Content rating: </label><select name="app_content_rating"></select></p>
+        </form>
+    </body>
+
+    <script>
+        var categories = [
+            'ART_AND_DESIGN', 
+            'AUTO_AND_VEHICLES', 
+            'BEAUTY', 
+            'BOOKS_AND_REFERENCE', 
+            'BUSINESS', 
+            'COMICS', 
+            'COMMUNICATION', 
+            'DATING', 
+            'EDUCATION', 
+            'ENTERTAINMENT', 
+            'EVENTS', 
+            'FAMILY', 
+            'FICE', 
+            'FOOD_AND_DRINK', 
+            'GAME', 
+            'HEALTH_AND_FITNESS', 
+            'HOUSE_AND_HOME', 
+            'LIBRARIES_AND_DEMO', 
+            'LIFESTYLE', 
+            'MAPS_AND_NAVIGATION', 
+            'MEDICAL', 
+            'NEWS_AND_MAGAZINES', 
+            'PARENTING', 
+            'PERSONALIZATION', 
+            'PHOTOGRAPHY', 
+            'PRODUCTIVITY', 
+            'SHOPPING', 
+            'SOCIAL', 
+            'SPORTS', 
+            'TOOLS', 
+            'TRAVEL_AND_LOCAL', 
+            'VIDEO_PLAYERS', 
+            'WEATHER'
+        ];
+
+        var content_ratings = [
+            'Unrated',
+            'Everyone', 
+            'Everyone 10+', 
+            'Teen', 
+            'Mature 17+', 
+            'Adults only 18+', 
+        ];
+
+        $(document).ready(function() {
+            let category_select = $('select[name=app_category]');
+            let content_ratings_select = $('select[name=app_content_rating]');
+
+            for (let category of categories) {
+                let option = document.createElement('option');
+                option.value = category;
+                option.innerHTML = category.charAt(0).toUpperCase() + category.toLowerCase().slice(1).replace(/_/g, ' ');
+
+                category_select.append(option);
+            }
+
+            for (let content_rating of content_ratings) {
+                let option = document.createElement('option');
+                option.value = content_rating;
+                option.innerHTML = content_rating;
+
+                content_ratings_select.append(option);
+            }
+        });
+    </script>
+</html>
