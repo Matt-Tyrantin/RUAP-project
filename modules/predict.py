@@ -1,10 +1,13 @@
 import urllib2
 import json 
+import math
 
 API_KEY = 'OkBFV/GW3n/rfqOXChEb+/yp3oe/s7pPa0UzKm0tW6dJAau16MWuou28WKI+KSZxpUGfD6tgwHhxlWRl4WeCoA=='
 URL = 'https://ussouthcentral.services.azureml.net/workspaces/92518c6337964d95af1c417d83471dec/services/535fd871d310474ea32a096456a43822/execute?api-version=2.0&details=true'
 
-MAX_VALUE = 1000000000
+#MAX_VALUE = 1000000000
+A = 1126
+B = 10.37
 
 def predict_single(form_data):
     app_category = form_data['app_category']
@@ -36,7 +39,9 @@ def predict_single(form_data):
 
         raw_value = float(json.loads(result)['Results']['output1']['value']['Values'][0][0])
 
-        result_value = max(0, int(raw_value * MAX_VALUE))
+        #result_value = max(0, int(raw_value * MAX_VALUE))
+
+        result_value = int(A*math.exp(B*raw_value))
 
         return str(result_value)
 
