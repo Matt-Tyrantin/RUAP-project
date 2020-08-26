@@ -26,6 +26,9 @@
                         It also provides API on its own which sends necessary data to estimate the number of installs - without needing
                         to know Azure's API key.
                     </p>
+                    <p><em>Prediction of unreleased/new application is highly deviable. It is best used on applications
+                        which are already in Google Play store.
+                    </em></p>
                 </article>
 
                 <article>
@@ -35,10 +38,9 @@
                         <form method="POST" action="/predict/">
                             <p><label for="app_name">App name: </label><input type="text" name="app_name"></p>
                             <p><label for="app_category">Category: </label><select name="app_category"></select></p>
-                            <p class="toggleable"><label for="app_rating">Current average rating: </label><input type="number" name="app_rating"></p>
+                            <p class="toggleable"><label for="app_rating">Current average rating: </label><input type="number" step="any" name="app_rating"></p>
                             <p class="toggleable"><label for="app_ratings">Number of ratings: </label><input type="number" name="app_ratings"></p>
-                            <p class="toggleable"><label for="app_installs">Number of current installs: </label><input type="number" name="app_installs"></p>
-                            <p><label for="app_price">Price: </label>$<input type="number" name="app_price" required></p>
+                            <p><label for="app_price">Price: </label>$<input type="number" name="app_price" step="any" required></p>
                             <p><label for="app_content_rating">Content rating: </label><select name="app_content_rating"></select></p>
 
                             <p><input type="submit"></p>
