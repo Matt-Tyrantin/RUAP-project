@@ -11,9 +11,9 @@ B = 10.37
 
 def predict_single(form_data):
     app_category = form_data['app_category']
-    app_rating = form_data['app_rating'] or 0
-    app_ratings = form_data['app_ratings'] or 0
     app_installs = 0
+    app_rating = (form_data['app_rating'] or 3) if form_data['new'] == 'false' else 3 
+    app_ratings = (form_data['app_ratings'] or 1) if form_data['new'] == 'false' else 1 
     app_price = form_data['app_price']
     app_content_rating = form_data['app_content_rating']
 

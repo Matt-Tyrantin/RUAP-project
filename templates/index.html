@@ -1,16 +1,18 @@
 <!DOCTYPE html>
 <html lang="en">
     <head>
-        <title>App Install Predictor</title>
+        <title>Google Play Store App Install Predictor</title>
 
         <meta charset="UTF-8">
+
+        <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/webpage.css') }}">
 
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     </head>
 
     <body>
         <header>
-            <h1>App Install Predictor</h1>
+            <h1>Google Play Store App Install Predictor</h1>
         </header>
 
         <main>
@@ -26,21 +28,22 @@
                         It also provides API on its own which sends necessary data to estimate the number of installs - without needing
                         to know Azure's API key.
                     </p>
-                    <p><em>Prediction of unreleased/new application is highly deviable. It is best used on applications
+                    <p><em>Prediction of unreleased/new application is highly inaccurate. It is best used on applications
                         which are already in Google Play store.
                     </em></p>
                 </article>
 
-                <article>
+                <article class="form">
                     <div class="form">
-                        <button id="switch_form">New application</button>
+                        <button id="switch_form">Switch to completely new app</button>
 
                         <form method="POST" action="/predict/">
+                            <p class="toggleable" id="warning" hidden><em>Warning: prediction of new applications is very inaccurate.</em></p>
                             <p><label for="app_name">App name: </label><input type="text" name="app_name"></p>
                             <p><label for="app_category">Category: </label><select name="app_category"></select></p>
-                            <p class="toggleable"><label for="app_rating">Current average rating: </label><input type="number" step="any" name="app_rating"></p>
-                            <p class="toggleable"><label for="app_ratings">Number of ratings: </label><input type="number" name="app_ratings"></p>
-                            <p><label for="app_price">Price: </label>$<input type="number" name="app_price" step="any" required></p>
+                            <p class="toggleable"><label for="app_rating">Current average rating: </label><input type="number" step="any" min="1" max="5" name="app_rating"></p>
+                            <p class="toggleable"><label for="app_ratings">Number of ratings: </label><input type="number" min="0" name="app_ratings"></p>
+                            <p><label for="app_price">Price: </label><input type="number" name="app_price" step="any" min="0" required>$</p>
                             <p><label for="app_content_rating">Content rating: </label><select name="app_content_rating"></select></p>
 
                             <p><input type="submit"></p>
@@ -48,6 +51,7 @@
                     </div>
 
                     <div class="result">
+                        <p>Estimated number of installs:</p>
                         <p class="result"></p>
                     </div>
                 </article>
@@ -145,7 +149,7 @@
 
             $('form').submit(function() {
                 $('p.result').html('Evaluating...');
-                $.post($(this).attr('action'), $(this).serialize(), function (data) {
+                $.post($(this).attr('action'), $(this).serialize() + '&new=' + SWITCHED, function (data) {
                     console.log('Recieved data: ' + data);
 
                     $('p.result').html(data);
